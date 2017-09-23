@@ -3,19 +3,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
     android:orientation="vertical"
-    tools:context="com.youmenotmeme.MainActivity">
+    tools:context="com.youmenotmeme.MainActivity"
+    android:background="@drawable/bg"
+    >
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="30dp"
+        />
 
     <Button
         android:id="@+id/select_photo"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/select_photo_button" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:width="287dp"
+        android:height="50dp"
+        android:background="@drawable/btn_large_create"
+        android:text="@string/select_photo_button"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/take_photo"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/take_photo_button" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:width="287dp"
+        android:height="50dp"
+        android:background="@drawable/btn_large_takephoto"
+        android:src="@drawable/btn_large_takephoto"
+        android:text="@string/take_photo_button"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/photo_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:width="287dp"
+        android:height="50dp"
+        android:background="@drawable/btn_large_takephoto"
+        android:src="@drawable/btn_large_history"
+        android:text="My Memes"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"/>
 
 </LinearLayout>
