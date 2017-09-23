@@ -80,7 +80,7 @@
         android:layout_marginLeft="20dp"
         android:layout_alignBaseline="@+id/meme2"
         android:layout_alignBottom="@+id/meme2"
-        android:layout_toStartOf="@+id/meme2"
+        android:layout_toStartOf="@+id/meme2"/>
 
 
     <Button
