@@ -78,7 +78,9 @@
         android:textSize="20dp"
         android:textAlignment="center"
         android:paddingBottom="7dp"
+        android:paddingLeft="10dp"
         android:textStyle="bold"
+        android:layout_marginLeft="20dp"
 
 
         android:layout_alignBaseline="@+id/meme2"
@@ -114,6 +116,7 @@
         android:textAlignment="center"
         android:paddingBottom="7dp"
         android:textStyle="bold"
+        android:layout_marginRight="20dp"
 
         android:layout_alignBaseline="@+id/meme2"
         android:layout_alignBottom="@+id/meme2"
