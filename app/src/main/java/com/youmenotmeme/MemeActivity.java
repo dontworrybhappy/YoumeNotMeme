@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,14 +21,18 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MemeActivity extends AppCompatActivity {
 
@@ -35,7 +41,9 @@ public class MemeActivity extends AppCompatActivity {
 
     EditText mEditText;
     ImageView mImage;
-
+    ImageView mCombined;
+    Button buttonShare;
+    Button buttonSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,19 @@ public class MemeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meme);
         Bundle extras = getIntent().getExtras();
 
+
+        buttonShare = (Button) findViewById(R.id.share);
+        buttonShare.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                shareImage(((BitmapDrawable)mImage.getDrawable()).getBitmap());
+            }
+        });
+        buttonSave = (Button) findViewById(R.id.save);
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                saveImageLocally(((BitmapDrawable)mImage.getDrawable()).getBitmap());
+            }
+        });
         mEditText = (EditText) findViewById(R.id.caption_top);
         mImage = (ImageView) findViewById(R.id.meme_display);
 
@@ -53,24 +74,6 @@ public class MemeActivity extends AppCompatActivity {
 //            Bitmap bitmap = CommonUtils.createBitmapFromPath(mImagePath);
 //            Toast.makeText(this, mImagePath, Toast.LENGTH_LONG).show();
 //            mImage.setImageBitmap(bitmap);
-
-            ViewTreeObserver vto = mEditText.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    Bitmap foreground = loadBitmapFromView(mEditText);
-                    Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
-
-                    Bitmap combinedBmp = combineImages(background, foreground);
-
-                    mEditText.setVisibility(View.INVISIBLE);
-                    mImage.setImageBitmap(combinedBmp);
-                    Log.d("Meme", "Made combined");
-                    Log.d("Meme", mEditText.getText().toString());
-                }
-            });
-
 
             mEditText.setText("Hello World");
         }
@@ -110,6 +113,7 @@ public class MemeActivity extends AppCompatActivity {
 
     /** Next 2 functions taken from https://stackoverflow.com/questions/7661875/how-to-use-share-image-using-sharing-intent-to-share-images-in-android */
     private void shareImage(Bitmap bitmapImage) {
+        callCombineImages();
         String localAbsoluteFilePath = saveImageLocally(bitmapImage);
 
         if (localAbsoluteFilePath != null && !localAbsoluteFilePath.equals("")) {
@@ -134,26 +138,73 @@ public class MemeActivity extends AppCompatActivity {
         }
     }
 
-    private String saveImageLocally(Bitmap _bitmap) {
-//
-//        File outputDir = Utils.getAlbumStorageDir(Environment.DIRECTORY_DOWNLOADS);
-//        File outputFile = null;
-//        try {
-//            outputFile = File.createTempFile("tmp", ".png", outputDir);
-//        } catch (IOException e1) {
-//            // handle exception
-//        }
-//
-//        try {
-//            FileOutputStream out = new FileOutputStream(outputFile);
-//            _bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-//            out.close();
-//
-//        } catch (Exception e) {
-//            // handle exception
-//        }
-//
-//        return outputFile.getAbsolutePath();
+    private void callCombineImages() {
+        ViewTreeObserver vto = mEditText.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Bitmap foreground = loadBitmapFromView(mEditText);
+                Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
+
+                Bitmap combinedBmp = combineImages(background, foreground);
+
+                mEditText.setVisibility(View.INVISIBLE);
+                mImage.setImageBitmap(combinedBmp);
+                Log.d("Meme", "Made combined");
+                Log.d("Meme", mEditText.getText().toString());
+            }
+        });
+    }
+
+    private String saveImageLocally(Bitmap image) {
+        callCombineImages();
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d("TAG",
+                    "Error creating media file, check storage permissions: ");
+            return"";
+        }
+        try {
+            Log.d("PICTURE", pictureFile.getPath());
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d("TAG", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d("TAG", "Error accessing file: " + e.getMessage());
+        }
         return "";
+    }
+
+    private void galleryAddPic(File f) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+    /** Create a File for saving an image or video */
+    private File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Pictures/YoumeNotMeme/");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        galleryAddPic(mediaFile);
+        return mediaFile;
     }
 }

@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 public class CommonUtils {
     public final static int READ_IMAGES_REQUEST = 7;
     public final static int REQUEST_EXTERNAL_READ_PERMISSION = 42;
+    public final static int TAKE_PHOTO_CODE = 100;
+    public final static int PHOTO_ACTIVITY = 80;
 
     public static Bitmap createBitmapFromPath(String path) {
         return BitmapFactory.decodeFile(path);
