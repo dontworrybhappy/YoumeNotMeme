@@ -1,6 +1,7 @@
 package com.youmenotmeme;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -15,8 +16,6 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private static final int READ_REQUEST_CODE = 7;
-    ItemsList recentPhotos;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recentPhotos = new ItemsList();
     }
 
     private void getUserImages() {
@@ -47,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), MemeActivity.class);
             i.putExtra("imageUri", imageUri.toString());
             startActivity(i);
-
-
         }
     }
 
