@@ -38,6 +38,8 @@ public class CommonUtils {
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("here");
+
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity,

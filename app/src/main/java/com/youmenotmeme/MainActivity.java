@@ -1,16 +1,16 @@
 package com.youmenotmeme;
 
-import android.content.ContentResolver;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.service.exception.BadRequestException;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                 getUserImages();
             }
         });
-        final Button buttonTakePhoto = (Button) findViewById(R.id.select_photo);
+        final Button buttonTakePhoto = (Button) findViewById(R.id.take_photo);
         buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 takePhoto();
@@ -44,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getUserImages() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            CommonUtils.requestFilePermissions(this);
+            return;
+        }
+
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -78,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    ClassifyImageTask imageTask = new ClassifyImageTask();
-                    imageTask.execute();
+                    getUserImages();
 
                 } else {
 
@@ -95,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
     /** see https://developer.android.com/training/volley/simple.html */
     private void callWatson() throws FileNotFoundException {
-        Log.d("Requesting permissions", "requesting");
-        CommonUtils.requestFilePermissions(this);
+        ClassifyImageTask imageTask = new ClassifyImageTask();
+        imageTask.execute();
     }
 
     private void launchMemeActivity() {
