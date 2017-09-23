@@ -1,15 +1,20 @@
 package com.youmenotmeme;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,21 +23,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.ibm.watson.developer_cloud.service.exception.BadRequestException;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassResult;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImage;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifierResult;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private static Button buttonSelectPhoto;
 
     private Uri mImageUri = null;
-    private static final double CLASS_THRESHOLD = 0.4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
                 getUserImages();
             }
         });
-        final Button buttonTakePhoto = (Button) findViewById(R.id.take_photo);
+        buttonTakePhoto = (Button) findViewById(R.id.take_photo);
         buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    takePicture();
-                }
+            public void onClick(View v) {
+                takePicture();
+            }
         });
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             buttonTakePhoto.setEnabled(false);
@@ -67,13 +67,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getUserImages() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            CommonUtils.requestFilePermissions(this);
-            return;
-        }
-
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -82,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void takePicture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        file = Uri.fromFile(getOutputMediaFile());
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
         if(intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, CommonUtils.PHOTO_ACTIVITY);
         }
@@ -98,13 +93,15 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        if(requestCode == CommonUtils.PHOTO_ACTIVITY && resultCode == RESULT_OK && data != null) {
-            mImageUri = data.getData();
-            Toast.makeText(this, mImageUri.toString(), Toast.LENGTH_LONG).show();
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView memeView = (ImageView) findViewById(R.id.dankassmemes);
-
+        if(requestCode == CommonUtils.PHOTO_ACTIVITY && resultCode == RESULT_OK) {
+            if(data != null) {
+                mImageUri = Uri.parse(data.getExtras().getString("imageUri"));
+            }
+            try {
+                callWatson();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -117,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
-                getUserImages();
+                ClassifyImageTask imageTask = new ClassifyImageTask();
+                imageTask.execute();
 
             } else {
 
@@ -134,78 +132,74 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private static File getOutputMediaFile() {
+        System.out.println("called this function getoutputmediafile");
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "CameraDemo");
+        System.out.println("timestamPPPPPPP");
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+    }
     /** see https://developer.android.com/training/volley/simple.html */
     private void callWatson() throws FileNotFoundException {
-        ClassifyImageTask imageTask = new ClassifyImageTask();
-        imageTask.execute();
+        Log.d("Requesting permissions", "requesting");
+        CommonUtils.requestFilePermissions(this);
     }
 
-    private void launchMemeActivity(ArrayList<String> captions) {
+    private void launchMemeActivity() {
         Intent i = new Intent(getApplicationContext(), MemeActivity.class);
         i.putExtra("imageUri", mImageUri.toString());
-        i.putStringArrayListExtra("captions", captions);
         startActivity(i);
     }
 
-    private class ClassifyImageTask extends AsyncTask<Void, Void, ClassifiedImages> {
-        protected ClassifiedImages doInBackground(Void... params) {
+    private class ClassifyImageTask extends AsyncTask<Void, Void, Uri> {
+        protected Uri doInBackground(Void... params) {
             final Uri imageUri = mImageUri;
 
             VisualRecognition service = new VisualRecognition(VisualRecognition
                     .VERSION_DATE_2016_05_20);
             service.setApiKey(getString(R.string.api_key));
             Log.d("Watson", imageUri.getPath());
-            ClassifyOptions options;
-            ClassifiedImages result;
+            ClassifyOptions options = null;
             try {
+//                Log.d("File", CommonUtils.getRealPathFromURI(getApplicationContext(), imageUri));
+
                 options = new ClassifyOptions.Builder()
                         .imagesFile(new File("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170902-180308.png"))
-                        .parameters("{\"classifier_ids\": [\"" + getString(R.string.meme_classifier) + "\"]," +
-                                "\"owners\": [\"me\"]}")
+                        .parameters("{\"classifier_ids\": [\"default\"]," +
+                                "\"owners\": [\"IBM\"], \"threshold\": 0.4," +
+                                "\"url\": \"https://staticdelivery.nexusmods.com/mods/110/images/74627-0-1459502036.jpg\"}")
                         .build();
-                result = service.classify(options).execute();
-            } catch (BadRequestException|FileNotFoundException e) {
+
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
 
-            return result;
-        }
-
-        protected void onPostExecute(final ClassifiedImages result) {
-            if (result != null) {
-                ArrayList<String> captions = parseWatsonResult(result);
-
-                if (captions != null && !captions.isEmpty()) {
-                    launchMemeActivity(captions);
-                }
-            }
-        }
-
-        private ArrayList<String> parseWatsonResult(ClassifiedImages result) {
-            List<ClassifiedImage> images = result.getImages();
-            if (images.size() != 1) {
-                Log.d("captions", images.toString());
+            try {
+                ClassifiedImages result = service.classify(options).execute();
+                Log.d("Watson", result.toString());
+            } catch (BadRequestException e) {
+                e.printStackTrace();
                 return null;
             }
-            ClassifiedImage image =  images.get(0);
 
-            List<ClassifierResult> classifiers = image.getClassifiers();
-            if (classifiers.size() != 1 || !classifiers.get(0).getClassifierId().equals(getString(R.string.meme_classifier))) {
-                Log.d("captions", classifiers.get(0).getClassifierId() + getString(R.string.meme_classifier));
-                return null;
+            return imageUri;
+        }
+
+        protected void onPostExecute(final Uri imageUri) {
+            if (mImageUri != null) {
+                launchMemeActivity();
             }
-            List<ClassResult> classes = classifiers.get(0).getClasses();
-
-            ArrayList<String> captions = new ArrayList<>();
-            for (ClassResult classResult : classes) {
-                if (classResult.getScore() > CLASS_THRESHOLD) {
-                    captions.add(classResult.getClassName());
-                }
-            }
-            Log.d("captions", captions.toString());
-
-            return captions;
         }
     }
 }
