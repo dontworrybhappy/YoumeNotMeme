@@ -71,6 +71,7 @@ public class MemeActivity extends AppCompatActivity {
                         mCombined.setImageBitmap(combinedBmp);
                         mEditText.setVisibility(View.INVISIBLE);
                         mImage.setVisibility(View.INVISIBLE);
+                        mCombined.setVisibility(View.VISIBLE);
                         Log.d("Meme", "Made combined");
                         Log.d("Meme", mEditText.getText().toString());
                     } catch (IOException e) {
@@ -96,10 +97,13 @@ public class MemeActivity extends AppCompatActivity {
         width = size.x;
         height = size.y;
 
+        System.out.println("bmp" + foreground.getHeight());
+
+
         cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(cs);
         background = Bitmap.createScaledBitmap(background, width, height, true);
-//        comboImage.drawBitmap(background, 0, 0, null);
+        comboImage.drawBitmap(background, 0, 0, null);
         comboImage.drawBitmap(foreground, 0, 0, null);
 
         return cs;
@@ -109,7 +113,7 @@ public class MemeActivity extends AppCompatActivity {
     public static Bitmap loadBitmapFromView(View v) {
         Bitmap b = Bitmap.createBitmap( v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
-        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
         v.draw(c);
         return b;
     }
