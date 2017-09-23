@@ -1,16 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg"
     android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
     tools:context="com.youmenotmeme.MemeActivity">
+
+    <ImageView
+        android:id="@+id/rectangle_meme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/meme_display"
+        android:src="@drawable/rectangle_meme"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/meme_display"
+        android:layout_alignTop="@id/meme_display"
+        android:layout_alignRight="@id/meme_display"
+        android:layout_alignBottom="@id/meme_display"
+        android:layout_margin="1dp"
+        android:gravity="center"
+        android:text="Hello World"
+        android:textColor="#000000"
+        android:textSize="40pt"
+        android:id="@+id/caption_top"/>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/meme_display"/>
+        android:id="@+id/combined_image"
+        android:visibility="invisible"
+        />
 
+    <ImageView
+        android:id="@+id/meme_all_the_things"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="16dp"
+        android:src="@drawable/meme_all_the_things" />
 
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/meme_all_the_things"
+        android:src="@drawable/line" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/meme_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/line"
+        android:src="@drawable/rectangle_white"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/meme1"
+        android:layout_gravity="left|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_meme"
+        android:text="Meme 1"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+        android:layout_marginRight="20dp"
+
+        android:layout_alignBaseline="@+id/meme2"
+        android:layout_alignBottom="@+id/meme2"
+        android:layout_marginLeft="20dp"
+        />
+
+    <Button
+        android:id="@+id/meme2"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_meme"
+        android:text="Meme 2"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+
+        android:layout_below="@+id/meme_display"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
+
+    <Button
+        android:id="@+id/meme3"
+        android:layout_gravity="end|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_meme"
+        android:text="Meme 3"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+        android:layout_marginRight="20dp"
+
+        android:layout_alignBaseline="@+id/meme2"
+        android:layout_alignBottom="@+id/meme2"
+        android:layout_marginLeft="265dp" />
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/btn_save"
+        android:paddingBottom="7dp"
+        android:text="Save"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:layout_below="@+id/rectangle_meme" />
+
+    <Button
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_horizontal"
+        android:layout_marginLeft="200dp"
+        android:background="@drawable/btn_save"
+        android:paddingBottom="7dp"
+        android:text="Share"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:layout_below="@+id/rectangle_meme" />
+
+</RelativeLayout>
