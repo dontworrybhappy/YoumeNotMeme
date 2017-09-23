@@ -123,5 +123,38 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="11dp" />
 
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/btn_save"
+        android:paddingBottom="7dp"
+        android:paddingLeft="10dp"
+        android:text="Save"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_below="@+id/rectangle_meme"
+        android:layout_alignStart="@+id/meme1" />
+
+    <Button
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/btn_save"
+        android:paddingBottom="7dp"
+        android:paddingLeft="10dp"
+        android:text="Share"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_below="@+id/rectangle_meme"
+        android:layout_toEndOf="@+id/meme_all_the_things" />
 
 </RelativeLayout>
