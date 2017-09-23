@@ -1,6 +1,7 @@
 package com.youmenotmeme;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -15,21 +16,23 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private static final int READ_REQUEST_CODE = 7;
-    ItemsList recentPhotos;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button button = (Button) findViewById(R.id.select_photo);
-        button.setOnClickListener(new View.OnClickListener() {
+        final Button buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
+        buttonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getUserImages();
             }
         });
-
-        recentPhotos = new ItemsList();
+        final Button buttonTakePhoto = (Button) findViewById(R.id.select_photo);
+        buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                takePhoto();
+            }
+        });
     }
 
     private void getUserImages() {
@@ -37,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
+    private void takePhoto() {
+
     }
 
     @Override
@@ -47,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), MemeActivity.class);
             i.putExtra("imageUri", imageUri.toString());
             startActivity(i);
-
-
         }
     }
 
