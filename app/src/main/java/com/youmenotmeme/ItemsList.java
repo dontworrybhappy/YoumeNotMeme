@@ -1,6 +1,8 @@
 package com.youmenotmeme;
 
 import android.app.ListActivity;
+import android.content.ClipData;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,8 +12,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 /**
@@ -26,17 +32,17 @@ public class ItemsList extends ListActivity {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            setContentView(R.layout.items_list);
+            setContentView(R.layout.activity_main);
 
-            this.adapter = new ItemsAdapter(this, R.layout.items_list_item, ItemManager.getLoadedItems());
-            setListAdapter(this.adapter);
+            this.adapter = new ItemsAdapter(this, R.layout.activity_main, savedInstanceState.getParcelableArrayList("imageURI"));
+            setListAdapter((ListAdapter) this.adapter);
         }
 
-        private class ItemsAdapter extends ArrayAdapter<Item> {
+        private class ItemsAdapter extends ArrayAdapter<ClipData.Item> {
 
-            private Item[] items;
+            private ClipData.Item[] items;
 
-            public ItemsAdapter(Context context, int textViewResourceId, Item[] items) {
+            public ItemsAdapter(Context context, int textViewResourceId, ClipData.Item[] items) {
                 super(context, textViewResourceId, items);
                 this.items = items;
             }
