@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
     tools:context="com.youmenotmeme.MemeActivity">
-
 
     <ImageView
         android:layout_width="wrap_content"
@@ -28,5 +31,94 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/combined_image"/>
+        android:id="@+id/combined_image"
+        android:visibility="invisible"
+        />
+
+    <ImageView
+        android:id="@+id/meme_all_the_things"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="16dp"
+        android:src="@drawable/meme_all_the_things" />
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/meme_all_the_things"
+        android:src="@drawable/line" />
+
+    <ImageView
+        android:id="@+id/rectangle_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/line"
+        android:src="@drawable/rectangle_white" />
+
+    <ImageView
+        android:id="@+id/rectangle_meme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rectangle_white"
+        android:src="@drawable/rectangle_meme" />
+
+    <Button
+        android:id="@+id/meme1"
+        android:layout_gravity="left|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_meme"
+        android:text="Meme 1"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+
+
+        android:layout_alignBaseline="@+id/meme2"
+        android:layout_alignBottom="@+id/meme2"
+        android:layout_toEndOf="@+id/caption_top" />
+
+    <Button
+        android:id="@+id/meme2"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_meme"
+        android:text="Meme 2"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+
+        android:layout_below="@+id/rectangle_white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
+
+    <Button
+        android:id="@+id/meme3"
+        android:layout_gravity="end|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_meme"
+        android:text="Meme 3"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:paddingBottom="7dp"
+        android:textStyle="bold"
+
+        android:layout_alignBaseline="@+id/meme2"
+        android:layout_alignBottom="@+id/meme2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="11dp" />
+
+
 </RelativeLayout>
