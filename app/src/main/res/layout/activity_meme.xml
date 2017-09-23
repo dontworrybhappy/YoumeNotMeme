@@ -1,45 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    android:orientation="vertical"
-    tools:context="com.youmenotmeme.MemeActivity"
-    android:background="@drawable/bg"
-    >
+    tools:context="com.youmenotmeme.MemeActivity">
+
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/meme_display"/>
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/meme_display"
+        android:layout_alignTop="@id/meme_display"
+        android:layout_alignRight="@id/meme_display"
+        android:layout_alignBottom="@id/meme_display"
+        android:layout_margin="1dp"
+        android:gravity="center"
+        android:text="Hello World"
+        android:textColor="#000000"
+        android:textSize="40pt"
+        android:id="@+id/caption_top"/>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/meme_all_the_things"
-        android:paddingTop="5dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="16dp"
-        />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/line"
-        />
-
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="344dp"
-        android:src="@drawable/rectangle_white"
-        />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/rectangle_meme" />
-</LinearLayout>
+        android:id="@+id/combined_image"/>
+</RelativeLayout>
