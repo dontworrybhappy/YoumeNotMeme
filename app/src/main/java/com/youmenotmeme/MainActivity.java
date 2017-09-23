@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -94,9 +95,33 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if(requestCode == CommonUtils.PHOTO_ACTIVITY && resultCode == RESULT_OK) {
-            if(data != null) {
-                mImageUri = Uri.parse(data.getExtras().getString("imageUri"));
+//            if(data != null) {
+//                mImageUri = data.getParcelableExtra("imageUri");
+//                try {
+//                    callWatson();
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+            String mCurrentPhotoPath;
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File image = null;
+            try {
+                image = File.createTempFile(
+                        imageFileName,  /* prefix */
+                        ".jpg",         /* suffix */
+                        storageDir      /* directory */
+                );
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            // Save a file: path for use with ACTION_VIEW intents
+            mCurrentPhotoPath = image.getAbsolutePath();
+            mImageUri = Uri.fromFile(new File(mCurrentPhotoPath));
             try {
                 callWatson();
             } catch (FileNotFoundException e) {
