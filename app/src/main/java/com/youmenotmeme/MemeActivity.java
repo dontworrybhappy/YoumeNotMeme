@@ -16,10 +16,12 @@ import android.widget.Toast;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MemeActivity extends AppCompatActivity {
 
-    Uri imageUri;
+    Uri mImageUri;
+    ArrayList<String> mCaptions = new ArrayList<String>();
 
 
     @Override
@@ -29,11 +31,12 @@ public class MemeActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-            imageUri = Uri.parse(extras.getString("imageUri"));
+            mImageUri = Uri.parse(extras.getString("imageUri"));
+            mCaptions = extras.getStringArrayList("captions");
 
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                Toast.makeText(this, imageUri.toString(), Toast.LENGTH_LONG).show();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+                Toast.makeText(this, mImageUri.toString(), Toast.LENGTH_LONG).show();
                 ImageView memeView = (ImageView) findViewById(R.id.meme_display);
                 memeView.setImageBitmap(bitmap);
             } catch (IOException e) {
