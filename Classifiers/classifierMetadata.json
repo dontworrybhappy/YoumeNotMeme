@@ -1,0 +1,16 @@
+{
+    "classifier_id": "memes_1317972261",
+    "name": "memes",
+    "owner": "603cd86e-4141-4143-8403-937d17587504",
+    "status": "training",
+    "created": "2017-09-23T12:41:30.174Z",
+    "classes": [
+        {"class": "mostInterestingManInTheWorld"},
+        {"class": "jDawg"},
+        {"class": "goodGuyGreg"},
+        {"class": "aliens"},
+        {"class": "wat"},
+        {"class": "successKid"},
+        {"class": "scumbagSteve"}
+    ]
+}
