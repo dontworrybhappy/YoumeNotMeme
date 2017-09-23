@@ -1,3 +1,6 @@
+*.swp
+Classifiers/images/
+
 *.iml
 .gradle
 /local.properties
