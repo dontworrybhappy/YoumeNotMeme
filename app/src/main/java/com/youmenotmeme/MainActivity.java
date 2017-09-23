@@ -1,11 +1,20 @@
 package com.youmenotmeme;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
+    private static final int READ_REQUEST_CODE = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,10 +23,29 @@ public class MainActivity extends AppCompatActivity {
         final Button button = (Button) findViewById(R.id.select_photo);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                
+                getUserImages();
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == READ_REQUEST_CODE) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                Toast.makeText(this, imageUri.toString(), Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    private void getUserImages() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, READ_REQUEST_CODE);
+    }
 }
