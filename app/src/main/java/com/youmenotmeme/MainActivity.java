@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static Button buttonTakePhoto;
     private static Button buttonSelectPhoto;
 
-    private Uri mImageUri = null;
+    private String mImagePath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == CommonUtils.READ_IMAGES_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            mImageUri = data.getData();
+            mImagePath = data.getData().getPath();
             try {
                 callWatson();
             } catch (FileNotFoundException e) {
@@ -120,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Save a file: path for use with ACTION_VIEW intents
-            mCurrentPhotoPath = image.getAbsolutePath();
-            mImageUri = Uri.fromFile(new File(mCurrentPhotoPath));
+            mImagePath = image.getAbsolutePath();
             try {
                 callWatson();
             } catch (FileNotFoundException e) {
@@ -182,14 +181,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchMemeActivity() {
         Intent i = new Intent(getApplicationContext(), MemeActivity.class);
-        i.putExtra("imageUri", mImageUri.toString());
+        i.putExtra("imageUri", Uri.parse(mImagePath));
         startActivity(i);
     }
 
     private class ClassifyImageTask extends AsyncTask<Void, Void, Uri> {
         protected Uri doInBackground(Void... params) {
-            final Uri imageUri = mImageUri;
-
+            final Uri imageUri = Uri.parse(mImagePath);
             VisualRecognition service = new VisualRecognition(VisualRecognition
                     .VERSION_DATE_2016_05_20);
             service.setApiKey(getString(R.string.api_key));
@@ -199,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
 //                Log.d("File", CommonUtils.getRealPathFromURI(getApplicationContext(), imageUri));
 
                 options = new ClassifyOptions.Builder()
-                        .imagesFile(new File("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170902-180308.png"))
+                        .imagesFile(new File(mImagePath))
                         .parameters("{\"classifier_ids\": [\"default\"]," +
                                 "\"owners\": [\"IBM\"], \"threshold\": 0.4," +
                                 "\"url\": \"https://staticdelivery.nexusmods.com/mods/110/images/74627-0-1459502036.jpg\"}")
@@ -222,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(final Uri imageUri) {
-            if (mImageUri != null) {
+            if (mImagePath != "") {
                 launchMemeActivity();
             }
         }
