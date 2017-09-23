@@ -28,24 +28,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == READ_REQUEST_CODE) {
-            Uri imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                Toast.makeText(this, imageUri.toString(), Toast.LENGTH_LONG).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void getUserImages() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == READ_REQUEST_CODE) {
+            Uri imageUri = data.getData();
+            Intent i = new Intent(getApplicationContext(), MemeActivity.class);
+            i.putExtra("imageUri", imageUri.toString());
+            startActivity(i);
+
+
+        }
+    }
+
+
 }
