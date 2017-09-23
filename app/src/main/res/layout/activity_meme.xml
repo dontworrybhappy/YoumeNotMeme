@@ -3,8 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
     android:orientation="vertical"
-    tools:context="com.youmenotmeme.MemeActivity">
+    tools:context="com.youmenotmeme.MemeActivity"
+    android:background="@drawable/bg"
+    >
 
     <ImageView
         android:layout_width="wrap_content"
@@ -12,5 +16,30 @@
         android:id="@+id/meme_display"/>
 
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/meme_all_the_things"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="16dp"
+        />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/line"
+        />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="344dp"
+        android:src="@drawable/rectangle_white"
+        />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/rectangle_meme" />
 </LinearLayout>
