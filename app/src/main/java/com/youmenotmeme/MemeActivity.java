@@ -39,8 +39,6 @@ public class MemeActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
 
     }
