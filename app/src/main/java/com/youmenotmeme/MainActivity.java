@@ -29,10 +29,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button button = (Button) findViewById(R.id.select_photo);
-        button.setOnClickListener(new View.OnClickListener() {
+        final Button buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
+        buttonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getUserImages();
+            }
+        });
+        final Button buttonTakePhoto = (Button) findViewById(R.id.select_photo);
+        buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                takePhoto();
             }
         });
     }
@@ -42,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, CommonUtils.READ_IMAGES_REQUEST);
+    }
+
+    private void takePhoto() {
+
     }
 
     @Override
