@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
@@ -65,6 +66,8 @@ public class MemeActivity extends AppCompatActivity {
             }
         });
         mEditText = (EditText) findViewById(R.id.caption_top);
+        Typeface face= Typeface.createFromAsset(getAssets(),"fonts/digital.ttf");
+        mEditText.setTypeface(face);
         mImage = (ImageView) findViewById(R.id.meme_display);
 
         if (extras != null) {
