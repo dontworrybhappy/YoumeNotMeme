@@ -29,9 +29,10 @@
         android:layout_margin="1dp"
         android:gravity="center"
         android:text="Hello World"
-        android:textColor="#000000"
+        android:textColor="#ffffff"
         android:textSize="40pt"
-        android:id="@+id/caption_top"/>
+        android:id="@+id/caption_top"
+        android:background="@android:color/transparent"/>
 
     <ImageView
         android:id="@+id/meme_all_the_things"

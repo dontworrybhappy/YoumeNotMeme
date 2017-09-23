@@ -75,24 +75,6 @@ public class MemeActivity extends AppCompatActivity {
 //            Toast.makeText(this, mImagePath, Toast.LENGTH_LONG).show();
 //            mImage.setImageBitmap(bitmap);
 
-            ViewTreeObserver vto = mEditText.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    Bitmap foreground = loadBitmapFromView(mEditText);
-                    Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
-
-                    Bitmap combinedBmp = combineImages(background, foreground);
-
-                    mEditText.setVisibility(View.INVISIBLE);
-                    mImage.setImageBitmap(combinedBmp);
-                    Log.d("Meme", "Made combined");
-                    Log.d("Meme", mEditText.getText().toString());
-                }
-            });
-
-
             mEditText.setText("Hello World");
         }
 
@@ -131,6 +113,7 @@ public class MemeActivity extends AppCompatActivity {
 
     /** Next 2 functions taken from https://stackoverflow.com/questions/7661875/how-to-use-share-image-using-sharing-intent-to-share-images-in-android */
     private void shareImage(Bitmap bitmapImage) {
+        callCombineImages();
         String localAbsoluteFilePath = saveImageLocally(bitmapImage);
 
         if (localAbsoluteFilePath != null && !localAbsoluteFilePath.equals("")) {
@@ -155,7 +138,27 @@ public class MemeActivity extends AppCompatActivity {
         }
     }
 
+    private void callCombineImages() {
+        ViewTreeObserver vto = mEditText.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Bitmap foreground = loadBitmapFromView(mEditText);
+                Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
+
+                Bitmap combinedBmp = combineImages(background, foreground);
+
+                mEditText.setVisibility(View.INVISIBLE);
+                mImage.setImageBitmap(combinedBmp);
+                Log.d("Meme", "Made combined");
+                Log.d("Meme", mEditText.getText().toString());
+            }
+        });
+    }
+
     private String saveImageLocally(Bitmap image) {
+        callCombineImages();
         File pictureFile = getOutputMediaFile();
         if (pictureFile == null) {
             Log.d("TAG",
