@@ -15,6 +15,8 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private static final int READ_REQUEST_CODE = 7;
+    ItemsList recentPhotos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
                 getUserImages();
             }
         });
+
+        recentPhotos = new ItemsList();
     }
 
     private void getUserImages() {
