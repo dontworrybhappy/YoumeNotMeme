@@ -35,13 +35,6 @@
         android:background="@android:color/transparent"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/combined_image"
-        android:visibility="invisible"
-        />
-
-    <ImageView
         android:id="@+id/meme_all_the_things"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
