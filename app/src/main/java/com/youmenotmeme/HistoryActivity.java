@@ -148,7 +148,7 @@ public class HistoryActivity extends Activity {
                                     int position, long id) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("image/jpg");
-                File f = files[position];
+                File f = files[files.length - 1 - position];
                 shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
                 startActivity(Intent.createChooser(shareIntent, "Share Image"));
             }
