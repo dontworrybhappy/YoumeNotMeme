@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,8 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.CaptioningManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.service.exception.BadRequestException;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static Button buttonTakePhoto;
     private static Button buttonSelectPhoto;
     private static Button buttonHistory;
+    private static ProgressBar progressBar;
 
     private Uri mImageUri = null;
     private String mImagePath = null;
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         buttonHistory = (Button) findViewById(R.id.photo_history);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         buttonHistory.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), HistoryActivity.class);
@@ -111,30 +116,17 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == CommonUtils.READ_IMAGES_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             mImageUri = data.getData();
             try {
-                System.out.println("path" + mImageUri.toString());
-                System.out.println("suffix" + mImageUri.toString().substring(mImageUri.toString().lastIndexOf(".")));
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageUri);
-                File tmpFile = File.createTempFile(
-                        "youmetmp",
-                        ".jpg",
-                        getExternalFilesDir(Environment.DIRECTORY_PICTURES));
-                OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, os);
-                os.close();
-
-                mImagePath = tmpFile.getPath();
-                callWatson();
+                callWatsonFromBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         if(requestCode == CommonUtils.PHOTO_ACTIVITY && resultCode == RESULT_OK && data != null) {
-            mImageUri = data.getData();
-            Toast.makeText(this, mImageUri.toString(), Toast.LENGTH_LONG).show();
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView memeView = (ImageView) findViewById(R.id.dankassmemes);
-
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            callWatsonFromBitmap(bitmap);
         }
     }
 
@@ -166,18 +158,20 @@ public class MainActivity extends AppCompatActivity {
 
     /** see https://developer.android.com/training/volley/simple.html */
     private void callWatson() throws FileNotFoundException {
+        progressBar.setVisibility(View.VISIBLE);
         ClassifyImageTask imageTask = new ClassifyImageTask();
         imageTask.execute();
     }
 
-    private void launchMemeActivity(ArrayList<String> captions) {
+    private void launchMemeActivity(ArrayList<CaptionPair> captions) {
+        progressBar.setVisibility(View.INVISIBLE);
         Intent i = new Intent(getApplicationContext(), MemeActivity.class);
         System.out.println("image path" + mImagePath);
         for(int x = 0; x < captions.size(); x++) {
             System.out.println("captions" + captions.get(x).toString());
         }
         i.putExtra("imagePath", mImagePath);
-        i.putStringArrayListExtra("captions", captions);
+        i.putParcelableArrayListExtra("captions", captions);
         startActivity(i);
     }
 
@@ -208,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(final ClassifiedImages result) {
             if (result != null) {
-                ArrayList<String> captions = parseWatsonResult(result);
+                ArrayList<CaptionPair> captions = parseWatsonResult(result);
 
                 if (captions != null && !captions.isEmpty()) {
                     launchMemeActivity(captions);
@@ -216,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private ArrayList<String> parseWatsonResult(ClassifiedImages result) {
+        private ArrayList<CaptionPair> parseWatsonResult(ClassifiedImages result) {
             List<ClassifiedImage> images = result.getImages();
             if (images.size() != 1) {
                 Log.d("captions", images.toString());
@@ -235,15 +229,36 @@ public class MainActivity extends AppCompatActivity {
             }
             List<ClassResult> classes = classifiers.get(0).getClasses();
 
-            ArrayList<String> captions = new ArrayList<>();
+            ArrayList<CaptionPair> captions = new ArrayList<>();
+            ClassResult highestClass = null;
             for (ClassResult classResult : classes) {
-                if (classResult.getScore() > CLASS_THRESHOLD) {
-                    captions.add(classResult.getClassName());
+                if (highestClass == null || classResult.getScore() > highestClass.getScore()) {
+                    highestClass = classResult;
                 }
             }
-            Log.d("captions", captions.toString());
+            if (highestClass == null) {
+                captions = Captions.captions.get("wat");
+            } else {
+                captions = Captions.captions.get(highestClass.getClassName());
+            }
 
             return captions;
+        }
+    }
+
+    private void callWatsonFromBitmap(Bitmap bmp) {
+        try {
+            File tmpFile = File.createTempFile(
+                "youmetmp",
+                ".jpg",
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
+            bmp.compress(Bitmap.CompressFormat.JPEG, 75, os);
+            os.close();
+            mImagePath = tmpFile.getPath();
+            callWatson();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -90,7 +90,6 @@ public class MemeActivity extends AppCompatActivity {
             Collections.shuffle(mCaptions);
 
             Bitmap bitmap = CommonUtils.createBitmapFromPath(mImagePath);
-            Toast.makeText(this, mImagePath, Toast.LENGTH_LONG).show();
             mImage.setImageBitmap(bitmap);
 
             mEditTextTop.setText(mCaptions.get(memeNumber).top);
@@ -213,6 +212,7 @@ public class MemeActivity extends AppCompatActivity {
         if(urls.size() == 0) {
             callCombineImages();
             File pictureFile = getOutputMediaFile();
+            System.out.println("ABS path" + pictureFile.getAbsolutePath());
             if (pictureFile == null) {
                 Log.d("TAG",
                         "Error creating media file, check storage permissions: ");
