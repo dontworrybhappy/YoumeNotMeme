@@ -131,7 +131,7 @@ public class HistoryActivity extends Activity {
         File targetDirector = new File(getString(R.string.target_path));
 
         File[] files = targetDirector.listFiles();
-        if (files.length != 0) {
+        if (files != null && files.length != 0) {
             for (File file : files) {
                 myImageAdapter.add(file.getAbsolutePath());
             }
