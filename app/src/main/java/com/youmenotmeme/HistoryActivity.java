@@ -128,7 +128,7 @@ public class HistoryActivity extends Activity {
 
 
         //Toast.makeText(getApplicationContext(), getString(R.string.target_path), Toast.LENGTH_LONG).show();
-        File targetDirector = new File(getString(R.string.target_path));
+        File targetDirector = new File(Environment.getExternalStorageDirectory() + getString(R.string.target_path));
 
         File[] files = targetDirector.listFiles();
         if (files != null && files.length != 0) {
