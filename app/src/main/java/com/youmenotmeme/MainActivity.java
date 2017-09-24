@@ -5,40 +5,49 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
+
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.service.exception.BadRequestException;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.Class;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassResult;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImage;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.Classifier;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifierResult;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static Uri file;
+    private static Button buttonTakePhoto;
+    private static Button buttonSelectPhoto;
+
     private Uri mImageUri = null;
     private String mImagePath = null;
 
@@ -48,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
+        buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
         buttonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getUserImages();
@@ -56,10 +65,15 @@ public class MainActivity extends AppCompatActivity {
         });
         final Button buttonTakePhoto = (Button) findViewById(R.id.take_photo);
         buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                takePhoto();
-            }
+                public void onClick(View v) {
+                    takePicture();
+                }
         });
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            buttonTakePhoto.setEnabled(false);
+            ActivityCompat.requestPermissions(MainActivity.this, new String [] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, CommonUtils.TAKE_PHOTO_CODE);
+        }
+
     }
 
     private void getUserImages() {
@@ -76,8 +90,11 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, CommonUtils.READ_IMAGES_REQUEST);
     }
 
-    private void takePhoto() {
-
+    public void takePicture() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, CommonUtils.PHOTO_ACTIVITY);
+        }
     }
 
     @Override
@@ -103,31 +120,40 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        if(requestCode == CommonUtils.PHOTO_ACTIVITY && resultCode == RESULT_OK && data != null) {
+            mImageUri = data.getData();
+            Toast.makeText(this, mImageUri.toString(), Toast.LENGTH_LONG).show();
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            ImageView memeView = (ImageView) findViewById(R.id.dankassmemes);
+
+        }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case CommonUtils.REQUEST_EXTERNAL_READ_PERMISSION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == CommonUtils.REQUEST_EXTERNAL_READ_PERMISSION) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    getUserImages();
+                // permission was granted, yay! Do the
+                // contacts-related task you need to do.
+                getUserImages();
 
-                } else {
+            } else {
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
+                // permission denied, boo! Disable the
+                // functionality that depends on this permission.
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
+        } else if(requestCode == CommonUtils.TAKE_PHOTO_CODE)
+        {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                buttonTakePhoto.setEnabled(true);
+            }
         }
+
     }
 
     /** see https://developer.android.com/training/volley/simple.html */
