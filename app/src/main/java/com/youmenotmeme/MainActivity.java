@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.service.exception.BadRequestException;
@@ -48,23 +47,28 @@ public class MainActivity extends AppCompatActivity {
     private static Uri file;
     private static Button buttonTakePhoto;
     private static Button buttonSelectPhoto;
-    private ProgressBar mProgressBar;
+    private static Button buttonHistory;
 
     private Uri mImageUri = null;
     private String mImagePath = null;
 
     private static final double CLASS_THRESHOLD = 0.4;
-    private static final String DEFAULT_CLASS = "wat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
         buttonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getUserImages();
+            }
+        });
+        buttonHistory = (Button) findViewById(R.id.photo_history);
+        buttonHistory.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), HistoryActivity.class);
+                startActivity(i);
             }
         });
         final Button buttonTakePhoto = (Button) findViewById(R.id.take_photo);
@@ -162,16 +166,14 @@ public class MainActivity extends AppCompatActivity {
 
     /** see https://developer.android.com/training/volley/simple.html */
     private void callWatson() throws FileNotFoundException {
-        mProgressBar.setVisibility(View.VISIBLE);
         ClassifyImageTask imageTask = new ClassifyImageTask();
         imageTask.execute();
     }
 
-    private void launchMemeActivity(ArrayList<CaptionPair> captions) {
-        mProgressBar.setVisibility(View.INVISIBLE);
+    private void launchMemeActivity(ArrayList<String> captions) {
         Intent i = new Intent(getApplicationContext(), MemeActivity.class);
         i.putExtra("imagePath", mImagePath);
-        i.putParcelableArrayListExtra("captions", captions);
+        i.putStringArrayListExtra("captions", captions);
         startActivity(i);
     }
 
@@ -202,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(final ClassifiedImages result) {
             if (result != null) {
-                ArrayList<CaptionPair> captions = parseWatsonResult(result);
+                ArrayList<String> captions = parseWatsonResult(result);
 
                 if (captions != null && !captions.isEmpty()) {
                     launchMemeActivity(captions);
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private ArrayList<CaptionPair> parseWatsonResult(ClassifiedImages result) {
+        private ArrayList<String> parseWatsonResult(ClassifiedImages result) {
             List<ClassifiedImage> images = result.getImages();
             if (images.size() != 1) {
                 Log.d("captions", images.toString());
@@ -229,18 +231,13 @@ public class MainActivity extends AppCompatActivity {
             }
             List<ClassResult> classes = classifiers.get(0).getClasses();
 
-            ArrayList<CaptionPair> captions = new ArrayList<>();
-            ClassResult highestClass = null;
+            ArrayList<String> captions = new ArrayList<>();
             for (ClassResult classResult : classes) {
-                if (highestClass == null || classResult.getScore() > highestClass.getScore()) {
-                    highestClass = classResult;
+                if (classResult.getScore() > CLASS_THRESHOLD) {
+                    captions.add(classResult.getClassName());
                 }
             }
-            if (highestClass == null) {
-                captions = Captions.captions.get("wat");
-            } else {
-                captions = Captions.captions.get(highestClass.getClassName());
-            }
+            Log.d("captions", captions.toString());
 
             return captions;
         }
