@@ -212,7 +212,6 @@ public class MemeActivity extends AppCompatActivity {
         if(urls.size() == 0) {
             callCombineImages();
             File pictureFile = getOutputMediaFile();
-            System.out.println("ABS path" + pictureFile.getAbsolutePath());
             if (pictureFile == null) {
                 Log.d("TAG",
                         "Error creating media file, check storage permissions: ");
