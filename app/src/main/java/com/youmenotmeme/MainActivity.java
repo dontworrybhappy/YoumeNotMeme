@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.CaptioningManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -48,23 +50,30 @@ public class MainActivity extends AppCompatActivity {
     private static Uri file;
     private static Button buttonTakePhoto;
     private static Button buttonSelectPhoto;
-    private ProgressBar mProgressBar;
+    private static Button buttonHistory;
+    private static ProgressBar progressBar;
 
     private Uri mImageUri = null;
     private String mImagePath = null;
 
     private static final double CLASS_THRESHOLD = 0.4;
-    private static final String DEFAULT_CLASS = "wat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
         buttonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getUserImages();
+            }
+        });
+        buttonHistory = (Button) findViewById(R.id.photo_history);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        buttonHistory.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), HistoryActivity.class);
+                startActivity(i);
             }
         });
         final Button buttonTakePhoto = (Button) findViewById(R.id.take_photo);
@@ -107,30 +116,17 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == CommonUtils.READ_IMAGES_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             mImageUri = data.getData();
             try {
-                System.out.println("path" + mImageUri.toString());
-                System.out.println("suffix" + mImageUri.toString().substring(mImageUri.toString().lastIndexOf(".")));
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageUri);
-                File tmpFile = File.createTempFile(
-                        "youmetmp",
-                        ".jpg",
-                        getExternalFilesDir(Environment.DIRECTORY_PICTURES));
-                OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, os);
-                os.close();
-
-                mImagePath = tmpFile.getPath();
-                callWatson();
+                callWatsonFromBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         if(requestCode == CommonUtils.PHOTO_ACTIVITY && resultCode == RESULT_OK && data != null) {
-            mImageUri = data.getData();
-            Toast.makeText(this, mImageUri.toString(), Toast.LENGTH_LONG).show();
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView memeView = (ImageView) findViewById(R.id.dankassmemes);
-
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            callWatsonFromBitmap(bitmap);
         }
     }
 
@@ -162,13 +158,13 @@ public class MainActivity extends AppCompatActivity {
 
     /** see https://developer.android.com/training/volley/simple.html */
     private void callWatson() throws FileNotFoundException {
-        mProgressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         ClassifyImageTask imageTask = new ClassifyImageTask();
         imageTask.execute();
     }
 
     private void launchMemeActivity(ArrayList<CaptionPair> captions) {
-        mProgressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
         Intent i = new Intent(getApplicationContext(), MemeActivity.class);
         i.putExtra("imagePath", mImagePath);
         i.putParcelableArrayListExtra("captions", captions);
@@ -242,6 +238,22 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return captions;
+        }
+    }
+
+    private void callWatsonFromBitmap(Bitmap bmp) {
+        try {
+            File tmpFile = File.createTempFile(
+                "youmetmp",
+                ".jpg",
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
+            bmp.compress(Bitmap.CompressFormat.JPEG, 80, os);
+            os.close();
+            mImagePath = tmpFile.getPath();
+            callWatson();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
