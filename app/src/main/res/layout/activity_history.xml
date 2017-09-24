@@ -10,16 +10,16 @@
         tools:context="com.youmenotmeme.HistoryActivity">
 
     <GridView
-        android:layout_width="353dp"
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:columnWidth="90dp"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:gravity="center"
+        android:columnWidth="100dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="100dp"
+        android:horizontalSpacing="4dp"
+        android:stretchMode="spacingWidthUniform"
         />
 
 </RelativeLayout>
