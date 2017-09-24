@@ -90,7 +90,6 @@ public class MemeActivity extends AppCompatActivity {
             Collections.shuffle(mCaptions);
 
             Bitmap bitmap = CommonUtils.createBitmapFromPath(mImagePath);
-            Toast.makeText(this, mImagePath, Toast.LENGTH_LONG).show();
             mImage.setImageBitmap(bitmap);
 
             mEditTextTop.setText(mCaptions.get(memeNumber).top);
