@@ -6,6 +6,5 @@
     <string name="select_photo_button">Create Meme</string>
     <string name="take_photo_button">Take Photo</string>
     <string name="title_activity_meme">MemeActivity</string>
-    <string name="target_path">Environment.getExternalStorageDirectory()
-                + "/Pictures/YoumeNotMeme/"</string>
+    <string name="target_path">/Pictures/YoumeNotMeme/</string>
 </resources>

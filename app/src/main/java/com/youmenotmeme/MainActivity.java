@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Try another image, max file size is 2MB.", Toast.LENGTH_SHORT).show();
                 }
 
-                return null;
+                return Captions.captions.get("wat");
             }
             List<ClassResult> classes = classifiers.get(0).getClasses();
 
