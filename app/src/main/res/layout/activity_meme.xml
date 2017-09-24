@@ -27,12 +27,30 @@
         android:layout_alignRight="@id/meme_display"
         android:layout_alignBottom="@id/meme_display"
         android:layout_margin="1dp"
-        android:gravity="center"
-        android:text="Hello World"
+        android:layout_gravity="center_vertical|top"
+        android:gravity="top"
+        android:text="Memes All Day"
         android:textColor="#ffffff"
-        android:textSize="40pt"
+        android:textSize="20pt"
+        android:textAlignment="center"
         android:id="@+id/caption_top"
         android:background="@android:color/transparent"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/meme_display"
+        android:layout_alignTop="@id/meme_display"
+        android:layout_alignRight="@id/meme_display"
+        android:layout_alignBottom="@id/meme_display"
+        android:layout_margin="1dp"
+        android:layout_gravity="center_vertical|bottom"
+        android:gravity="bottom"
+        android:text="Memes Everywhere"
+        android:textColor="#ffffff"
+        android:textSize="20pt"
+        android:textAlignment="center"
+        android:id="@+id/caption_bottom"/>
 
     <ImageView
         android:id="@+id/meme_all_the_things"

@@ -9,5 +9,17 @@
         android:paddingTop="16dp"
         tools:context="com.youmenotmeme.HistoryActivity">
 
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center"
+        android:columnWidth="100dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="100dp"
+        android:horizontalSpacing="4dp"
+        android:stretchMode="spacingWidthUniform"
+        />
 
 </RelativeLayout>

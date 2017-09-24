@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
@@ -32,19 +33,26 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class MemeActivity extends AppCompatActivity {
 
     String mImagePath;
-    ArrayList<String> mCaptions = new ArrayList<String>();
+    ArrayList<CaptionPair> mCaptions = new ArrayList<>();
 
-    EditText mEditText;
+    int memeNumber = 0;
+
+    EditText mEditTextTop;
+    EditText mEditTextBot;
     ImageView mImage;
-    ImageView mCombined;
+
     Button buttonShare;
     Button buttonSave;
     ArrayList<String> urls = new ArrayList<String>();
+    Button meme1;
+    Button meme2;
+    Button meme3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +72,55 @@ public class MemeActivity extends AppCompatActivity {
                 saveImageLocally(((BitmapDrawable)mImage.getDrawable()).getBitmap());
             }
         });
-        mEditText = (EditText) findViewById(R.id.caption_top);
+        mEditTextTop = (EditText) findViewById(R.id.caption_top);
+        mEditTextBot = (EditText) findViewById(R.id.caption_bottom);
+        Typeface face= Typeface.createFromAsset(getAssets(),"fonts/impact.ttf");
+        mEditTextTop.setTypeface(face);
+        mEditTextTop.setEnabled(false);
+        mEditTextBot.setTypeface(face);
+        mEditTextBot.setEnabled(false);
         mImage = (ImageView) findViewById(R.id.meme_display);
+        meme1 = (Button) findViewById(R.id.meme1);
+        meme2 = (Button) findViewById(R.id.meme2);
+        meme3 = (Button) findViewById(R.id.meme3);
 
         if (extras != null) {
             mImagePath = extras.getString("imagePath");
-            mCaptions = extras.getStringArrayList("captions");
+            mCaptions = extras.getParcelableArrayList("captions");
+            Collections.shuffle(mCaptions);
 
-//            Bitmap bitmap = CommonUtils.createBitmapFromPath(mImagePath);
-//            Toast.makeText(this, mImagePath, Toast.LENGTH_LONG).show();
-//            mImage.setImageBitmap(bitmap);
+            Bitmap bitmap = CommonUtils.createBitmapFromPath(mImagePath);
+            Toast.makeText(this, mImagePath, Toast.LENGTH_LONG).show();
+            mImage.setImageBitmap(bitmap);
 
-            mEditText.setText("Hello World");
+            mEditTextTop.setText(mCaptions.get(memeNumber).top);
+            mEditTextBot.setText(mCaptions.get(memeNumber).bottom);
         }
+
+        meme1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                memeNumber = 1;
+                mEditTextTop.setText(mCaptions.get(memeNumber).top);
+                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);
+            }
+        });
+
+        meme2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                memeNumber = 2;
+                mEditTextTop.setText(mCaptions.get(memeNumber).top);
+                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);            }
+        });
+
+        meme3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                memeNumber = 3;
+                mEditTextTop.setText(mCaptions.get(memeNumber).top);
+                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);            }
+        });
 
     }
 
@@ -115,11 +159,14 @@ public class MemeActivity extends AppCompatActivity {
     private void shareImage(Bitmap bitmapImage) {
         callCombineImages();
         String localAbsoluteFilePath = "";
+        System.out.println("urls size " + urls.size());
         if(urls.size() == 0) {
             localAbsoluteFilePath = saveImageLocally(bitmapImage);
         } else {
             localAbsoluteFilePath = urls.get(urls.size() - 1);
         }
+
+        System.out.println("filepath: " + localAbsoluteFilePath);
 
         if (localAbsoluteFilePath != null && !localAbsoluteFilePath.equals("")) {
 
@@ -144,20 +191,20 @@ public class MemeActivity extends AppCompatActivity {
     }
 
     private void callCombineImages() {
-        ViewTreeObserver vto = mEditText.getViewTreeObserver();
+        ViewTreeObserver vto = mEditTextTop.getViewTreeObserver();
         vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                Bitmap foreground = loadBitmapFromView(mEditText);
+                mEditTextTop.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Bitmap foreground = loadBitmapFromView(mEditTextTop);
                 Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
 
                 Bitmap combinedBmp = combineImages(background, foreground);
 
-                mEditText.setVisibility(View.INVISIBLE);
+                mEditTextTop.setVisibility(View.INVISIBLE);
                 mImage.setImageBitmap(combinedBmp);
                 Log.d("Meme", "Made combined");
-                Log.d("Meme", mEditText.getText().toString());
+                Log.d("Meme", mEditTextTop.getText().toString());
             }
         });
     }
@@ -199,8 +246,7 @@ public class MemeActivity extends AppCompatActivity {
     private File getOutputMediaFile(){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Pictures/YoumeNotMeme/");
+        File mediaStorageDir = new File(getString(R.string.target_path));
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
         // Create the storage directory if it does not exist
