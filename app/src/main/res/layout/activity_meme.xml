@@ -16,7 +16,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:background="#ffffff"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:scaleType="centerCrop"
         android:layout_marginBottom="15dp"
         />
@@ -33,6 +33,10 @@
         android:gravity="top"
         android:text="Memes All Day"
         android:textColor="#ffffff"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="1"
         android:textSize="20pt"
         android:textAlignment="center"
         android:id="@+id/caption_top"
@@ -50,7 +54,11 @@
         android:gravity="bottom"
         android:text="Memes yup"
         android:textColor="#ffffff"
-        android:textSize="20dp"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="1"
+        android:textSize="20pt"
         android:textAlignment="center"
         android:id="@+id/caption_bottom"
         android:background="@android:color/transparent"
@@ -77,7 +85,7 @@
         android:layout_height="110dp"
         android:src="@drawable/rectangle_meme"
         android:layout_below="@+id/meme_display"
-        android:layout_marginTop="-15dp"
+        android:layout_marginTop="-5dp"
         />
 
     <Button
