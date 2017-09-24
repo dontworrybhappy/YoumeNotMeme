@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,6 +19,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
 import android.widget.Button;
@@ -63,12 +65,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         buttonSelectPhoto = (Button) findViewById(R.id.select_photo);
+        buttonSelectPhoto.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_large_create_pressed), buttonSelectPhoto.getBackground()));
         buttonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getUserImages();
             }
         });
         buttonHistory = (Button) findViewById(R.id.photo_history);
+        buttonHistory.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_large_takephoto_pressed), buttonHistory.getBackground()));
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         buttonHistory.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -76,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        final Button buttonTakePhoto = (Button) findViewById(R.id.take_photo);
+        buttonTakePhoto = (Button) findViewById(R.id.take_photo);
+        buttonTakePhoto.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_large_takephoto_pressed), buttonTakePhoto.getBackground()));
         buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     takePicture();
@@ -254,6 +259,29 @@ public class MainActivity extends AppCompatActivity {
             callWatson();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    class ButtonTouchListener implements View.OnTouchListener {
+        private Drawable mPressedBg;
+        private Drawable mUnpressedBg;
+
+        ButtonTouchListener(Drawable pressedBg, Drawable unpressedBg) {
+            mPressedBg = pressedBg;
+            mUnpressedBg = unpressedBg;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            Button btn = (Button) view;
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                btn.setBackground(mPressedBg);
+                btn.setTextColor(getColor(R.color.pressedText));
+            } else if(event.getAction() == MotionEvent.ACTION_UP) {
+                btn.setBackground(mUnpressedBg);
+                btn.setTextColor(getColor(R.color.unpressedText));
+            }
+            return false;
         }
     }
 }

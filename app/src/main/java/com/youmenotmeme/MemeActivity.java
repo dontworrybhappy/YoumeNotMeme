@@ -4,9 +4,11 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -35,6 +38,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+
+import static android.R.attr.button;
 
 public class MemeActivity extends AppCompatActivity {
 
@@ -61,12 +66,14 @@ public class MemeActivity extends AppCompatActivity {
 
 
         buttonShare = (Button) findViewById(R.id.share);
+        buttonShare.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_save_pressed), buttonShare.getBackground()));
         buttonShare.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 shareImage(((BitmapDrawable)mImage.getDrawable()).getBitmap());
             }
         });
         buttonSave = (Button) findViewById(R.id.save);
+        buttonSave.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_save_pressed), buttonSave.getBackground()));
         buttonSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveImageLocally(((BitmapDrawable)mImage.getDrawable()).getBitmap());
@@ -80,9 +87,14 @@ public class MemeActivity extends AppCompatActivity {
         mEditTextBot.setTypeface(face);
         mEditTextBot.setEnabled(false);
         mImage = (ImageView) findViewById(R.id.meme_display);
+
+        Drawable memePressedBackground = getDrawable(R.drawable.btn_meme_pressed);
         meme1 = (Button) findViewById(R.id.meme1);
+        meme1.setOnTouchListener(new ButtonTouchListener(memePressedBackground, meme1.getBackground()));
         meme2 = (Button) findViewById(R.id.meme2);
+        meme2.setOnTouchListener(new ButtonTouchListener(memePressedBackground, meme2.getBackground()));
         meme3 = (Button) findViewById(R.id.meme3);
+        meme3.setOnTouchListener(new ButtonTouchListener(memePressedBackground, meme3.getBackground()));
 
         if (extras != null) {
             mImagePath = extras.getString("imagePath");
@@ -248,5 +260,28 @@ public class MemeActivity extends AppCompatActivity {
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         galleryAddPic(mediaFile);
         return mediaFile;
+    }
+
+    class ButtonTouchListener implements View.OnTouchListener {
+        private Drawable mPressedBg;
+        private Drawable mUnpressedBg;
+
+        ButtonTouchListener(Drawable pressedBg, Drawable unpressedBg) {
+            mPressedBg = pressedBg;
+            mUnpressedBg = unpressedBg;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            Button btn = (Button) view;
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                btn.setBackground(mPressedBg);
+                btn.setTextColor(getColor(R.color.pressedText));
+            } else if(event.getAction() == MotionEvent.ACTION_UP) {
+                btn.setBackground(mUnpressedBg);
+                btn.setTextColor(getColor(R.color.unpressedText));
+            }
+            return false;
+        }
     }
 }
