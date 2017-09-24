@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical|top"
         android:gravity="top"
         android:text="Memes All Day"
-        android:textColor="#000000"
+        android:textColor="#ffffff"
         android:textSize="20pt"
         android:textAlignment="center"
         android:id="@+id/caption_top"
