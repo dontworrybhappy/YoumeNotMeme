@@ -144,13 +144,17 @@ public class MemeActivity extends AppCompatActivity {
         int width, height;
         Bitmap cs;
 
-        height = background.getHeight();
+        mImage.setDrawingCacheEnabled(true);
+        background = mImage.getDrawingCache();
         width = background.getWidth();
-
+        height = background.getHeight();
 
         cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(cs);
-        background = Bitmap.createScaledBitmap(background, width, height, true);
+        System.out.println(height + " " + width + " " + top.getHeight() + " " + top.getWidth());
+        top = Bitmap.createScaledBitmap(top, width, height, true);
+        bot = Bitmap.createScaledBitmap(bot, width, height, true);
+
         comboImage.drawBitmap(background, 0, 0, null);
         comboImage.drawBitmap(top, 0, 0, null);
         comboImage.drawBitmap(bot, 0, 0, null);
