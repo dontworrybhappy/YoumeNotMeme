@@ -76,8 +76,11 @@ public class MainActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         buttonHistory.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 Intent i = new Intent(getApplicationContext(), HistoryActivity.class);
                 startActivity(i);
+                progressBar.setVisibility(View.INVISIBLE);
+
             }
         });
         buttonTakePhoto = (Button) findViewById(R.id.take_photo);

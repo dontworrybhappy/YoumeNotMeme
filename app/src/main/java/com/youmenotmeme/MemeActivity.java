@@ -28,6 +28,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -53,6 +54,7 @@ public class MemeActivity extends AppCompatActivity {
     EditText mEditTextTop;
     EditText mEditTextBot;
     ImageView mImage;
+    ProgressBar mProgressBar;
 
     Button buttonShare;
     Button buttonSave;
@@ -67,18 +69,24 @@ public class MemeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meme);
         Bundle extras = getIntent().getExtras();
 
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
         buttonShare = (Button) findViewById(R.id.share);
         buttonShare.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_save_pressed), buttonShare.getBackground()));
         buttonShare.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                mProgressBar.setVisibility(View.VISIBLE);
                 shareImage();
+
             }
         });
         buttonSave = (Button) findViewById(R.id.save);
         buttonSave.setOnTouchListener(new ButtonTouchListener(getDrawable(R.drawable.btn_save_pressed), buttonSave.getBackground()));
         buttonSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                mProgressBar.setVisibility(View.VISIBLE);
                 saveImageLocally();
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
         mEditTextTop = (EditText) findViewById(R.id.caption_top);
@@ -209,6 +217,8 @@ public class MemeActivity extends AppCompatActivity {
                 if (!share) {
                     Toast.makeText(MemeActivity.this, "Saved", Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Toast.makeText(MemeActivity.this, "Already Saved", Toast.LENGTH_LONG).show();
             }
             if (share) {
                 String localAbsoluteFilePath = "";
@@ -226,6 +236,7 @@ public class MemeActivity extends AppCompatActivity {
                     shareIntent.setType("image/jpg");
                     File f = new File(localAbsoluteFilePath);
                     shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     startActivity(Intent.createChooser(shareIntent, "Share Image"));
                 }
             }
