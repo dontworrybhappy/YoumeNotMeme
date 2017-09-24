@@ -4,6 +4,7 @@ package com.youmenotmeme;
  * Created by doug on 9/23/17.
  * File to hold/access caption data (in place of a DB).
  */
+import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 
 public class Captions {
-    public static Map<String, List<CaptionPair>> captions = new HashMap<>();
+    public static Map<String, ArrayList<CaptionPair>> captions = new HashMap<>();
     static {
         captions.put("aliens", new ArrayList<CaptionPair>(){{
             add(new CaptionPair("Guy on other team can fix bug you spent hours on","Aliens"));
