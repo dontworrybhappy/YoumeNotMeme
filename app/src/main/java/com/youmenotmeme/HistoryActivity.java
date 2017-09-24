@@ -25,6 +25,8 @@ public class HistoryActivity extends Activity {
 
     public class ImageAdapter extends BaseAdapter {
 
+        private int selectedPosition = 0;
+
         private Context mContext;
         ArrayList<String> itemList = new ArrayList<String>();
 
@@ -35,6 +37,10 @@ public class HistoryActivity extends Activity {
         void add(String path){
             itemList.add(path);
         }
+        private void setSelectedPosition(int position)
+        {
+            selectedPosition=position;
+        }
 
         @Override
         public int getCount() {
@@ -43,7 +49,7 @@ public class HistoryActivity extends Activity {
 
         @Override
         public Object getItem(int arg0) {
-            // TODO Auto-generated method stub
+
             return null;
         }
 
@@ -125,8 +131,6 @@ public class HistoryActivity extends Activity {
                 .getExternalStorageDirectory()
                 .getAbsolutePath();
 
-
-
         //Toast.makeText(getApplicationContext(), getString(R.string.target_path), Toast.LENGTH_LONG).show();
         File targetDirector = new File(Environment.getExternalStorageDirectory() + getString(R.string.target_path));
 
@@ -136,6 +140,14 @@ public class HistoryActivity extends Activity {
                 myImageAdapter.add(file.getAbsolutePath());
             }
         }
+
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+            }
+        });
     }
 
 }
