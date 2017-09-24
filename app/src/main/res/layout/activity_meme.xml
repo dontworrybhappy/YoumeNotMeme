@@ -48,7 +48,7 @@
         android:layout_gravity="center_vertical|bottom"
         android:gravity="bottom"
         android:text="Memes yup"
-        android:textColor="#0000000"
+        android:textColor="#ffffff"
         android:textSize="20dp"
         android:textAlignment="center"
         android:id="@+id/caption_bottom"
