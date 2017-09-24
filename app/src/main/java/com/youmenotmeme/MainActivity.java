@@ -171,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
     private void launchMemeActivity(ArrayList<CaptionPair> captions) {
         progressBar.setVisibility(View.INVISIBLE);
         Intent i = new Intent(getApplicationContext(), MemeActivity.class);
+        System.out.println("image path" + mImagePath);
+        for(int x = 0; x < captions.size(); x++) {
+            System.out.println("captions" + captions.get(x).toString());
+        }
         i.putExtra("imagePath", mImagePath);
         i.putParcelableArrayListExtra("captions", captions);
         startActivity(i);
@@ -178,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class ClassifyImageTask extends AsyncTask<Void, Void, ClassifiedImages> {
         protected ClassifiedImages doInBackground(Void... params) {
+
 
             VisualRecognition service = new VisualRecognition(VisualRecognition
                     .VERSION_DATE_2016_05_20);
