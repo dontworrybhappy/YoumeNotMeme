@@ -2,7 +2,7 @@
     <string name="app_name">YoumeNotMeme</string>
     <string name="watson_url">https://gateway-a.watsonplatform.net/visual-recognition/api</string>
     <string name="api_key">e1f4a55c1a00553c325c742ab66c1abdb06cc480</string>
-    <string name="meme_classifier">memes_704247696</string>
+    <string name="meme_classifier">memes_1119702450</string>
     <string name="select_photo_button">Create Meme</string>
     <string name="take_photo_button">Take Photo</string>
     <string name="title_activity_meme">MemeActivity</string>
