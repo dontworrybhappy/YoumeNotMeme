@@ -49,10 +49,11 @@
         android:gravity="bottom"
         android:text="Memes Everywhere"
         android:textColor="#ffffff"
-        android:textSize="20pt"
+        android:textSize="40dp"
         android:textAlignment="center"
         android:id="@+id/caption_bottom"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        />
 
     <ImageView
         android:id="@+id/meme_all_the_things"

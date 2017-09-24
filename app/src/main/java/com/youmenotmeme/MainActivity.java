@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 ".jpg",
                 getExternalFilesDir(Environment.DIRECTORY_PICTURES));
             OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
-            bmp.compress(Bitmap.CompressFormat.JPEG, 75, os);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 80, os);
             os.close();
             mImagePath = tmpFile.getPath();
             callWatson();
