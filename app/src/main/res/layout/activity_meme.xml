@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical|top"
         android:gravity="top"
         android:text="Memes All Day"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
         android:textSize="20pt"
         android:textAlignment="center"
         android:id="@+id/caption_top"
@@ -47,9 +47,9 @@
         android:layout_margin="1dp"
         android:layout_gravity="center_vertical|bottom"
         android:gravity="bottom"
-        android:text="Memes Everywhere"
-        android:textColor="#ffffff"
-        android:textSize="40dp"
+        android:text="Memes yup"
+        android:textColor="#0000000"
+        android:textSize="20dp"
         android:textAlignment="center"
         android:id="@+id/caption_bottom"
         android:background="@android:color/transparent"
@@ -75,7 +75,8 @@
         android:layout_width="match_parent"
         android:layout_height="110dp"
         android:src="@drawable/rectangle_meme"
-        android:layout_below="@+id/caption_top"
+        android:layout_below="@+id/meme_display"
+        android:layout_marginTop="-15dp"
         />
 
     <Button
