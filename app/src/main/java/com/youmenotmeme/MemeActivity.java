@@ -44,13 +44,13 @@ public class MemeActivity extends AppCompatActivity {
     ImageView mCombined;
     Button buttonShare;
     Button buttonSave;
+    ArrayList<String> urls = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meme);
         Bundle extras = getIntent().getExtras();
-
 
         buttonShare = (Button) findViewById(R.id.share);
         buttonShare.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +114,12 @@ public class MemeActivity extends AppCompatActivity {
     /** Next 2 functions taken from https://stackoverflow.com/questions/7661875/how-to-use-share-image-using-sharing-intent-to-share-images-in-android */
     private void shareImage(Bitmap bitmapImage) {
         callCombineImages();
-        String localAbsoluteFilePath = saveImageLocally(bitmapImage);
+        String localAbsoluteFilePath = "";
+        if(urls.size() == 0) {
+            localAbsoluteFilePath = saveImageLocally(bitmapImage);
+        } else {
+            localAbsoluteFilePath = urls.get(urls.size() - 1);
+        }
 
         if (localAbsoluteFilePath != null && !localAbsoluteFilePath.equals("")) {
 
@@ -158,22 +163,27 @@ public class MemeActivity extends AppCompatActivity {
     }
 
     private String saveImageLocally(Bitmap image) {
-        callCombineImages();
-        File pictureFile = getOutputMediaFile();
-        if (pictureFile == null) {
-            Log.d("TAG",
-                    "Error creating media file, check storage permissions: ");
-            return"";
-        }
-        try {
-            Log.d("PICTURE", pictureFile.getPath());
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
-            fos.close();
-        } catch (FileNotFoundException e) {
-            Log.d("TAG", "File not found: " + e.getMessage());
-        } catch (IOException e) {
-            Log.d("TAG", "Error accessing file: " + e.getMessage());
+        if(urls.size() == 0) {
+            callCombineImages();
+            File pictureFile = getOutputMediaFile();
+            if (pictureFile == null) {
+                Log.d("TAG",
+                        "Error creating media file, check storage permissions: ");
+                return "";
+            }
+            try {
+                Log.d("PICTURE", pictureFile.getPath());
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                fos.close();
+                urls.add(pictureFile.getPath());
+                Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
+            } catch (FileNotFoundException e) {
+                Log.d("TAG", "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d("TAG", "Error accessing file: " + e.getMessage());
+            }
+            return "";
         }
         return "";
     }

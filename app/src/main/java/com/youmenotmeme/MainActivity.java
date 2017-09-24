@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private class ClassifyImageTask extends AsyncTask<Void, Void, ClassifiedImages> {
         protected ClassifiedImages doInBackground(Void... params) {
 
+
             VisualRecognition service = new VisualRecognition(VisualRecognition
                     .VERSION_DATE_2016_05_20);
             service.setApiKey(getString(R.string.api_key));
