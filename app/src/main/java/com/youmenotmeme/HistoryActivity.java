@@ -127,12 +127,14 @@ public class HistoryActivity extends Activity {
 
 
 
-        Toast.makeText(getApplicationContext(), getString(R.string.target_path), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), getString(R.string.target_path), Toast.LENGTH_LONG).show();
         File targetDirector = new File(getString(R.string.target_path));
 
         File[] files = targetDirector.listFiles();
-        for (File file : files){
-            myImageAdapter.add(file.getAbsolutePath());
+        if (files.length != 0) {
+            for (File file : files) {
+                myImageAdapter.add(file.getAbsolutePath());
+            }
         }
     }
 
