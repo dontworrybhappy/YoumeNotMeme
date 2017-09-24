@@ -211,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (captions != null && !captions.isEmpty()) {
                     launchMemeActivity(captions);
+                } else {
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         }
@@ -228,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
             if (classifiers == null || classifiers.size() != 1 || !classifiers.get(0).getClassifierId().equals(getString(R.string.meme_classifier))) {
                 if (image.getError() != null && image.getError().getErrorId().equals("input_error")) {
                     Toast.makeText(MainActivity.this, "Try another image, max file size is 2MB.", Toast.LENGTH_SHORT).show();
+                    return null;
                 }
 
                 return Captions.captions.get("wat");

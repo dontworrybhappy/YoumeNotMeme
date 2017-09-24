@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import static android.R.attr.bottom;
 import static android.R.attr.button;
 
 public class MemeActivity extends AppCompatActivity {
@@ -82,7 +83,7 @@ public class MemeActivity extends AppCompatActivity {
         });
         mEditTextTop = (EditText) findViewById(R.id.caption_top);
         mEditTextBot = (EditText) findViewById(R.id.caption_bottom);
-        Typeface face= Typeface.createFromAsset(getAssets(),"fonts/impact.ttf");
+        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/impact.ttf");
         mEditTextTop.setTypeface(face);
         mEditTextTop.setEnabled(false);
         mEditTextBot.setTypeface(face);
@@ -123,7 +124,8 @@ public class MemeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 memeNumber = 2;
                 mEditTextTop.setText(mCaptions.get(memeNumber).top);
-                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);            }
+                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);
+            }
         });
 
         meme3.setOnClickListener(new View.OnClickListener() {
@@ -131,105 +133,103 @@ public class MemeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 memeNumber = 3;
                 mEditTextTop.setText(mCaptions.get(memeNumber).top);
-                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);            }
+                mEditTextBot.setText(mCaptions.get(memeNumber).bottom);
+            }
         });
 
     }
 
-    public Bitmap combineImages(Bitmap background, Bitmap foreground) {
+    public Bitmap combineImages(Bitmap background, Bitmap top, Bitmap bot) {
 
         int width, height;
         Bitmap cs;
 
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        width = size.x;
-        height = size.y;
-
-        System.out.println("bmp" + foreground.getHeight());
+        height = background.getHeight();
+        width = background.getWidth();
 
 
         cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(cs);
         background = Bitmap.createScaledBitmap(background, width, height, true);
         comboImage.drawBitmap(background, 0, 0, null);
-        comboImage.drawBitmap(foreground, 0, 0, null);
+        comboImage.drawBitmap(top, 0, 0, null);
+        comboImage.drawBitmap(bot, 0, 0, null);
 
         return cs;
     }
 
-    /** https://stackoverflow.com/questions/2339429/android-view-getdrawingcache-returns-null-only-null */
+    /**
+     * https://stackoverflow.com/questions/2339429/android-view-getdrawingcache-returns-null-only-null
+     */
     public static Bitmap loadBitmapFromView(View v) {
-        Bitmap b = Bitmap.createBitmap( v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
         v.draw(c);
         return b;
     }
 
-    /** Next 2 functions taken from https://stackoverflow.com/questions/7661875/how-to-use-share-image-using-sharing-intent-to-share-images-in-android */
+    /**
+     * Next 2 functions taken from https://stackoverflow.com/questions/7661875/how-to-use-share-image-using-sharing-intent-to-share-images-in-android
+     */
     private void shareImage() {
         callCombineImages(true);
     }
 
     private void callCombineImages(final boolean share) {
         ViewTreeObserver vto = mEditTextTop.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mEditTextTop.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                Bitmap foreground = loadBitmapFromView(mEditTextTop);
-                Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
+        Bitmap top = loadBitmapFromView(mEditTextTop);
+        Bitmap bot = loadBitmapFromView(mEditTextBot);
+        Bitmap background = CommonUtils.createBitmapFromPath(mImagePath);
 
-                Bitmap combinedBmp = combineImages(background, foreground);
+        Bitmap combinedBmp = combineImages(background, top, bot);
 
-                mEditTextTop.setVisibility(View.INVISIBLE);
-                mImage.setImageBitmap(combinedBmp);
-                Log.d("Meme", "Made combined");
-                Log.d("Meme", mEditTextTop.getText().toString());
-                File pictureFile = getOutputMediaFile();
-                if (pictureFile == null) {
-                    Log.d("TAG",
-                            "Error creating media file, check storage permissions: ");
-                    return;
+        mEditTextTop.setVisibility(View.INVISIBLE);
+        mEditTextBot.setVisibility(View.INVISIBLE);
+        mImage.setImageBitmap(combinedBmp);
+        Log.d("Meme", "Made combined");
+        Log.d("Meme", mEditTextTop.getText().toString());
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d("TAG",
+                    "Error creating media file, check storage permissions: ");
+            return;
+        }
+        try {
+            Log.d("PICTURE", pictureFile.getPath());
+            if (urls.size() == 0) {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                combinedBmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.close();
+                urls.add(pictureFile.getPath());
+                if (!share) {
+                    Toast.makeText(MemeActivity.this, "Saved", Toast.LENGTH_LONG).show();
                 }
-                try {
-                    Log.d("PICTURE", pictureFile.getPath());
-                    if(urls.size() == 0) {
-                        FileOutputStream fos = new FileOutputStream(pictureFile);
-                        Bitmap bm = ((BitmapDrawable)mImage.getDrawable()).getBitmap();
-                        bm.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        fos.close();
-                        urls.add(pictureFile.getPath());
-                        Toast.makeText(MemeActivity.this, "Saved", Toast.LENGTH_LONG).show();
-                    }
-                    if(share) {
-                        String localAbsoluteFilePath = "";
-                        System.out.println("urls size " + urls.size());
-                        if(urls.size() == 0) {
-                            localAbsoluteFilePath = pictureFile.getPath();
-                        } else {
-                            localAbsoluteFilePath = urls.get(urls.size() - 1);
-                        }
-
-                        System.out.println("filepath: " + localAbsoluteFilePath);
-
-                        if (localAbsoluteFilePath != null && !localAbsoluteFilePath.equals("")) {
-                            Intent share = new Intent(Intent.ACTION_SEND);
-                            share.setType("image/png");
-                            File f = new File(Environment.getExternalStorageDirectory() + File.separator + "temporary_file.png");
-                            share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.png"));
-                            startActivity(Intent.createChooser(share, "Share Image"));
-                        }
-                    }
-                } catch (FileNotFoundException e) {
-                    Log.d("TAG", "File not found: " + e.getMessage());
-                } catch (IOException e) {
-                    Log.d("TAG", "Error accessing file: " + e.getMessage());
-                }
-                return;
             }
-        });
+            if (share) {
+                String localAbsoluteFilePath = "";
+                System.out.println("urls size " + urls.size());
+                if (urls.size() == 0) {
+                    localAbsoluteFilePath = pictureFile.getPath();
+                } else {
+                    localAbsoluteFilePath = urls.get(urls.size() - 1);
+                }
+
+                System.out.println("filepath: " + localAbsoluteFilePath);
+
+                if (localAbsoluteFilePath != null && !localAbsoluteFilePath.equals("")) {
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("image/jpg");
+                    File f = new File(localAbsoluteFilePath);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                    startActivity(Intent.createChooser(shareIntent, "Share Image"));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            Log.d("TAG", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d("TAG", "Error accessing file: " + e.getMessage());
+        }
     }
 
     private void saveImageLocally() {
@@ -259,7 +259,7 @@ public class MemeActivity extends AppCompatActivity {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
         File mediaFile;
-        String mImageName="MI_"+ timeStamp +".png";
+        String mImageName="MI_"+ timeStamp +".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         galleryAddPic(mediaFile);
         return mediaFile;
