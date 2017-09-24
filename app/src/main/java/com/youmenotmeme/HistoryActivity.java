@@ -1,5 +1,7 @@
 package com.youmenotmeme;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -64,14 +66,13 @@ public class HistoryActivity extends Activity {
             ImageView imageView;
             if (convertView == null) {  // if it's not recycled, initialize some attributes
                 imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(220, 220));
+                imageView.setLayoutParams(new GridView.LayoutParams(550, 550));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(8, 8, 8, 8);
             } else {
                 imageView = (ImageView) convertView;
             }
 
-            Bitmap bm = decodeSampledBitmapFromUri(itemList.get(position), 220, 220);
+            Bitmap bm = decodeSampledBitmapFromUri(itemList.get(position), 550, 550);
 
             imageView.setImageBitmap(bm);
             return imageView;
@@ -117,7 +118,7 @@ public class HistoryActivity extends Activity {
     }
 
     ImageAdapter myImageAdapter;
-
+    File[] files;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,10 +135,10 @@ public class HistoryActivity extends Activity {
         //Toast.makeText(getApplicationContext(), getString(R.string.target_path), Toast.LENGTH_LONG).show();
         File targetDirector = new File(Environment.getExternalStorageDirectory() + getString(R.string.target_path));
 
-        File[] files = targetDirector.listFiles();
+        files = targetDirector.listFiles();
         if (files != null && files.length != 0) {
-            for (File file : files) {
-                myImageAdapter.add(file.getAbsolutePath());
+            for (int i = files.length - 1;  i >= 0; i--) {
+                myImageAdapter.add(files[i].getAbsolutePath());
             }
         }
 
@@ -145,7 +146,11 @@ public class HistoryActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("image/jpg");
+                File f = files[files.length - 1 - position];
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                startActivity(Intent.createChooser(shareIntent, "Share Image"));
             }
         });
     }
