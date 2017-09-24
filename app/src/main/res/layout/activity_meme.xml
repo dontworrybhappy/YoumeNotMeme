@@ -30,7 +30,7 @@
         android:layout_gravity="center_vertical|top"
         android:gravity="top"
         android:text="Hello World"
-        android:textColor="#000000"
+        android:textColor="#ffffff"
         android:textSize="20pt"
         android:textAlignment="center"
         android:id="@+id/caption_top"
@@ -47,7 +47,7 @@
         android:layout_gravity="center_vertical|bottom"
         android:gravity="bottom"
         android:text="Hello World"
-        android:textColor="#000000"
+        android:textColor="#ffffff"
         android:textSize="20pt"
         android:textAlignment="center"
         android:id="@+id/caption_bottom"/>
