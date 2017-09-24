@@ -12,11 +12,12 @@
     <ImageView
         android:id="@+id/meme_display"
         android:layout_width="match_parent"
-        android:layout_height="425dp"
+        android:layout_height="405dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:background="#ffffff"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="15dp"
         />
 
     <EditText
@@ -50,7 +51,8 @@
         android:textColor="#ffffff"
         android:textSize="20pt"
         android:textAlignment="center"
-        android:id="@+id/caption_bottom"/>
+        android:id="@+id/caption_bottom"
+        android:background="@android:color/transparent"/>
 
     <ImageView
         android:id="@+id/meme_all_the_things"
